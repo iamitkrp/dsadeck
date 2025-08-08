@@ -14,7 +14,7 @@ const sections = [
     title: "Questions",
     description: "Practice curated questions by topic and difficulty.",
     href: "/questions",
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     key: "mock-test",
