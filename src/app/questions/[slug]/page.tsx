@@ -73,8 +73,8 @@ export default async function QuestionDetail({ params }: { params: Promise<{ slu
           </CardContent>
         </Card>
 
-        <Card className="h-[96dvh] overflow-hidden border-border/60">
-          <CardContent className="h-[96dvh] p-0">
+        <Card className="border-border/60">
+          <CardContent className="p-0">
             <Editor question={q} />
           </CardContent>
         </Card>

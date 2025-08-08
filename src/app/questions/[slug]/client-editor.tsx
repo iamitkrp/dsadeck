@@ -99,30 +99,33 @@ export default function ClientEditor({ question }: { question: Question }) {
           )}
         </div>
       </div>
-      <div className="grid grid-rows-[auto_1fr_auto] min-h-0">
+      <div className="grid grid-rows-[auto_auto_auto] min-h-0">
         <div className="px-3 pb-3 text-xs text-muted-foreground">
           Write code and press Check to receive AI feedback and time complexity estimate.
         </div>
-        <Monaco
-          height="100%"
-          defaultLanguage={monacoLang}
-          language={monacoLang}
-          theme="vs-dark"
-          value={value}
-          onChange={(v) => setValue(v ?? "")}
-          options={{ fontSize: 14, minimap: { enabled: false }, automaticLayout: true, scrollBeyondLastLine: false, lineNumbers: "on" }}
-        />
+        <div className="h-[85dvh]">
+          <Monaco
+            height="100%"
+            defaultLanguage={monacoLang}
+            language={monacoLang}
+            theme="vs-dark"
+            value={value}
+            onChange={(v) => setValue(v ?? "")}
+            options={{ fontSize: 14, minimap: { enabled: false }, automaticLayout: true, scrollBeyondLastLine: false, lineNumbers: "on" }}
+          />
+        </div>
         {feedback ? (
           <>
+            <div className="h-2" />
             <Separator />
             <div className="p-3">
-              <div className="rounded-md bg-background ring-1 ring-border/60 p-2 text-xs whitespace-pre-wrap break-words overflow-auto max-h-[30dvh]">
+              <div className="rounded-md bg-background ring-1 ring-border/60 p-2 text-xs whitespace-pre-wrap break-words overflow-auto max-h-[34dvh]">
                 {feedback}
               </div>
             </div>
           </>
         ) : (
-          <div />
+          <div className="h-2" />
         )}
       </div>
       <Separator />

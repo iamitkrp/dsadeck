@@ -58,12 +58,55 @@ Respond ONLY in JSON with keys:
 
     const data = await resp.json();
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "{}";
-    let parsed: unknown;
-    try {
-      parsed = JSON.parse(text);
-    } catch {
-      parsed = { correct: false, feedback: text, suggestions: [], timeComplexity: "-", complexityReason: "-" };
+
+    function extractJsonCandidate(input: string): unknown | null {
+      const trimmed = input.trim();
+      // Remove common fences if present
+      const unfenced = trimmed.replace(/^```[a-zA-Z]*\n?/g, "").replace(/```$/g, "");
+      // Try direct parse
+      try { return JSON.parse(unfenced); } catch {}
+      // Fallback: find first {...} block
+      const match = unfenced.match(/\{[\s\S]*\}/);
+      if (match) {
+        try { return JSON.parse(match[0]); } catch {}
+      }
+      return null;
     }
+
+    type Raw = {
+      correct?: unknown;
+      feedback?: unknown;
+      message?: unknown;
+      suggestions?: unknown;
+      tips?: unknown;
+      timeComplexity?: unknown;
+      time_complexity?: unknown;
+      complexityReason?: unknown;
+      complexity_reason?: unknown;
+    };
+    function normalize(result: Raw) {
+      const suggestions = Array.isArray(result?.suggestions)
+        ? result.suggestions
+        : Array.isArray(result?.tips)
+        ? result.tips
+        : [];
+      return {
+        correct: Boolean(result?.correct),
+        feedback:
+          typeof result?.feedback === "string"
+            ? result.feedback
+            : typeof result?.message === "string"
+            ? result.message
+            : "",
+        suggestions,
+        timeComplexity: result?.timeComplexity || result?.time_complexity || "-",
+        complexityReason: result?.complexityReason || result?.complexity_reason || "-",
+      } as const;
+    }
+
+    const candidate = extractJsonCandidate(text);
+    const parsed = candidate ? normalize(candidate) : { correct: false, feedback: text, suggestions: [], timeComplexity: "-", complexityReason: "-" };
+
     return NextResponse.json({ ok: true, result: parsed });
   } catch (err) {
     return NextResponse.json(
