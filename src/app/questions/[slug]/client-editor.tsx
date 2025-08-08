@@ -20,6 +20,8 @@ export default function ClientEditor({ question }: { question: Question }) {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [complexity, setComplexity] = useState<string | null>(null);
   const [complexityWhy, setComplexityWhy] = useState<string | null>(null);
+  const [spaceComplexity, setSpaceComplexity] = useState<string | null>(null);
+  const [spaceWhy, setSpaceWhy] = useState<string | null>(null);
   const [hintStep, setHintStep] = useState<number>(0);
   const [showSolution, setShowSolution] = useState<boolean>(false);
 
@@ -31,6 +33,8 @@ export default function ClientEditor({ question }: { question: Question }) {
     setFeedback(null);
     setComplexity(null);
     setComplexityWhy(null);
+    setSpaceComplexity(null);
+    setSpaceWhy(null);
   }
 
   async function onCheck() {
@@ -58,6 +62,8 @@ export default function ClientEditor({ question }: { question: Question }) {
       setFeedback(lines.join("\n"));
       if (r.timeComplexity) setComplexity(String(r.timeComplexity));
       if (r.complexityReason) setComplexityWhy(String(r.complexityReason));
+      if (r.spaceComplexity) setSpaceComplexity(String(r.spaceComplexity));
+      if (r.spaceReason) setSpaceWhy(String(r.spaceReason));
     } catch (e) {
       setFeedback((e as Error).message);
     } finally {
@@ -70,6 +76,8 @@ export default function ClientEditor({ question }: { question: Question }) {
     setFeedback(null);
     setComplexity(null);
     setComplexityWhy(null);
+    setSpaceComplexity(null);
+    setSpaceWhy(null);
     setHintStep(0);
     setShowSolution(false);
   }
@@ -93,11 +101,7 @@ export default function ClientEditor({ question }: { question: Question }) {
         </div>
         <Button size="sm" onClick={onCheck} disabled={loading}>{loading ? "Checking…" : "Check"}</Button>
         <Button size="sm" variant="secondary" onClick={onReset} disabled={loading}>Reset</Button>
-        <div className="ml-auto text-xs text-muted-foreground">
-          {complexity && (
-            <span className="rounded bg-foreground/10 px-2 py-0.5">Time: {complexity}{complexityWhy ? ` – ${complexityWhy}` : ""}</span>
-          )}
-        </div>
+        <div className="ml-auto" />
       </div>
       <div className="grid grid-rows-[auto_auto_auto] min-h-0">
         <div className="px-3 pb-3 text-xs text-muted-foreground">
@@ -121,6 +125,14 @@ export default function ClientEditor({ question }: { question: Question }) {
             <div className="p-3">
               <div className="rounded-md bg-background ring-1 ring-border/60 p-2 text-xs whitespace-pre-wrap break-words overflow-auto max-h-[34dvh]">
                 {feedback}
+              </div>
+              <div className="mt-2 grid gap-1 text-[11px] text-muted-foreground">
+                {complexity && (
+                  <span className="rounded bg-foreground/10 px-2 py-0.5 text-foreground">Time: {complexity}{complexityWhy ? ` – ${complexityWhy}` : ""}</span>
+                )}
+                {spaceComplexity && (
+                  <span className="rounded bg-foreground/10 px-2 py-0.5 text-foreground">Space: {spaceComplexity}{spaceWhy ? ` – ${spaceWhy}` : ""}</span>
+                )}
               </div>
             </div>
           </>

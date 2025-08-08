@@ -18,14 +18,16 @@ export async function POST(req: NextRequest) {
     }
 
     const system = `You are a strict DSA coach and code analyzer. The user will send code for a programming question.
-Evaluate correctness and provide actionable feedback. Also estimate Big-O time complexity of the submitted solution's main routine and a one-line justification.
+Evaluate correctness and provide actionable feedback. Also estimate Big-O time and space complexity of the submitted solution's main routine and provide a one-line justification for each.
 Respond ONLY in JSON with keys:
 {
   "correct": boolean,
   "feedback": string,
   "suggestions": string[],
   "timeComplexity": string, // like "O(n log n)"
-  "complexityReason": string
+  "complexityReason": string,
+  "spaceComplexity": string, // like "O(n)"
+  "spaceReason": string
 }`;
 
     const userPrompt = `Topic: ${body.topic}\nLanguage: ${body.language}\n\nCode:\n${body.code}\n\nEvaluate correctness for the intended question. Check syntax and common logic errors. Provide constructive guidance. Estimate time complexity and reason. Return only JSON.`;
@@ -84,7 +86,8 @@ Respond ONLY in JSON with keys:
       complexityReason?: unknown;
       complexity_reason?: unknown;
     };
-    function normalize(result: Raw) {
+    type RawWithSpace = Raw & { spaceComplexity?: unknown; space_reason?: unknown; spaceReason?: unknown };
+    function normalize(result: RawWithSpace) {
       const suggestions = Array.isArray(result?.suggestions)
         ? result.suggestions
         : Array.isArray(result?.tips)
@@ -101,6 +104,14 @@ Respond ONLY in JSON with keys:
         suggestions,
         timeComplexity: result?.timeComplexity || result?.time_complexity || "-",
         complexityReason: result?.complexityReason || result?.complexity_reason || "-",
+        spaceComplexity:
+          (typeof (result as { spaceComplexity?: unknown }).spaceComplexity === "string" && (result as { spaceComplexity?: string }).spaceComplexity) ||
+          (typeof (result as { space_reason?: unknown }).space_reason === "string" && (result as { space_reason?: string }).space_reason) ||
+          (typeof (result as { spaceReason?: unknown }).spaceReason === "string" && (result as { spaceReason?: string }).spaceReason) ||
+          "-",
+        spaceReason:
+          (typeof (result as { spaceReason?: unknown }).spaceReason === "string" && (result as { spaceReason?: string }).spaceReason) ||
+          "-",
       } as const;
     }
 
