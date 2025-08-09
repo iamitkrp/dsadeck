@@ -121,6 +121,11 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* Improve small-screen spacing for cards and grids */
+  .container-padding {
+    padding-left: clamp(0.75rem, 2vw, 1rem);
+    padding-right: clamp(0.75rem, 2vw, 1rem);
+  }
 }
 
 /* Liquid glass effect for nav bars */

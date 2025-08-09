@@ -20,13 +20,13 @@ export default async function QuestionDetail({ params }: { params: Promise<{ slu
   if (!q) return notFound();
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+    <main className="mx-auto max-w-7xl container-padding py-6 sm:px-6">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-semibold tracking-tight">{q.title}</h1>
         <div className="text-xs text-muted-foreground capitalize">{q.difficulty}</div>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[1fr_2.5fr] lg:grid-cols-[minmax(360px,1fr)_2.2fr]">
+      <div className="grid gap-4 lg:grid-cols-[minmax(320px,1fr)_2fr]">
         <Card className="h-[96dvh] overflow-hidden border-border/60">
           <CardHeader className="pb-3">
             <CardTitle className="text-base">Problem</CardTitle>

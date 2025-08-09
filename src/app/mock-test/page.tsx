@@ -159,7 +159,7 @@ export default function MockTestPage() {
   }
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+    <main className="mx-auto max-w-7xl container-padding py-6 sm:px-6">
       <h1 className="mb-4 text-2xl font-semibold tracking-tight">Mock Test</h1>
 
       {mode === "setup" && (
@@ -208,7 +208,7 @@ export default function MockTestPage() {
       )}
 
       {mode === "running" && (
-        <div className="grid gap-4 xl:grid-cols-[320px_1fr]">
+        <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
           <Card className="border-border/60">
             <CardHeader className="pb-3">
               <CardTitle className="text-base">Time left: {formatTime(remainingMs)}</CardTitle>

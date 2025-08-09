@@ -27,9 +27,9 @@ export default function RevisionPage() {
   );
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+    <main className="mx-auto max-w-7xl container-padding py-6 sm:px-6">
       <h1 className="mb-4 text-2xl font-semibold tracking-tight">Revision</h1>
-      <div className="grid gap-4 md:grid-cols-[320px_1fr]">
+      <div className="grid gap-4 md:grid-cols-[minmax(260px,1fr)_2fr]">
         <Card className="h-[70dvh] overflow-hidden border-border/60">
           <CardHeader className="pb-3">
             <CardTitle className="text-base">Topics</CardTitle>

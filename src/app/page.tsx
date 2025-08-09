@@ -35,7 +35,7 @@ const sections = [
 
 export default function Home() {
   return (
-    <main className="relative mx-auto min-h-[calc(100dvh-3rem)] max-w-7xl px-4 py-10 sm:px-6">
+    <main className="relative mx-auto min-h-[calc(100dvh-3rem)] max-w-7xl container-padding py-10 sm:px-6">
       {/* Page content only; background provided globally in layout */}
 
       <section className="mx-auto mb-12 max-w-3xl text-center">
