@@ -16,20 +16,21 @@ export default function BackBar() {
     else router.push("/");
   }
 
-  // Hide the bar on the home page for a cleaner landing
-  const hide = pathname === "/";
-
-  if (hide) return null;
+  // On the home page we still show the bar to host the theme toggle,
+  // but we hide the Back button for a cleaner landing.
+  const hideBack = pathname === "/";
 
   return (
     <header className="liquid-glass sticky top-0 z-40 w-full border-b border-border/50 bg-background/40 supports-[backdrop-filter]:backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.08)] relative overflow-hidden">
       {/* glassy tint + subtle gradient */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-foreground/10 to-transparent" />
       <div className="mx-auto flex h-12 max-w-7xl items-center gap-3 px-4 sm:px-6">
-        <Button size="sm" variant="ghost" onClick={onBack} className="gap-1">
-          <ArrowLeft className="size-4" />
-          Back
-        </Button>
+        {!hideBack && (
+          <Button size="sm" variant="ghost" onClick={onBack} className="gap-1">
+            <ArrowLeft className="size-4" />
+            Back
+          </Button>
+        )}
         <div className="ml-auto" />
         <ThemeToggle />
       </div>
