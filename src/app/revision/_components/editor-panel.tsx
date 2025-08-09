@@ -20,6 +20,8 @@ export function EditorPanel({
   const [feedback, setFeedback] = useState<string | null>(null);
   const [resultOk, setResultOk] = useState<boolean | null>(null);
   const initialRef = useRef(code);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const monacoApiRef = useRef<any>(null);
 
   useEffect(() => {
     setValue(code);
@@ -27,6 +29,30 @@ export function EditorPanel({
     setFeedback(null);
     setResultOk(null);
   }, [code]);
+
+  // Keep Monaco theme in sync with app/theme
+  useEffect(() => {
+    function getIsDarkFromDom(): boolean {
+      const root = document.documentElement;
+      const body = document.body;
+      const hasDarkClass = root.classList.contains("dark") || (body && body.classList.contains("dark"));
+      const hasDarkData = root.getAttribute("data-theme") === "dark" || (body && body.getAttribute("data-theme") === "dark");
+      return Boolean(hasDarkClass || hasDarkData);
+    }
+
+    const apply = () => setIsDarkMode(getIsDarkFromDom());
+    apply();
+
+    const observer = new MutationObserver(apply);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "data-theme"] });
+    if (document.body) {
+      observer.observe(document.body, { attributes: true, attributeFilter: ["class", "data-theme"] });
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   async function onCheck() {
     setLoading(true);
@@ -69,6 +95,22 @@ export function EditorPanel({
       <div className="p-3 text-xs text-muted-foreground">Loading editor…</div>
     ),
   });
+  const monacoTheme = isDarkMode ? "vs-dark" : "vs";
+
+  function handleEditorMount(_editor: any, monaco: any) {
+    monacoApiRef.current = monaco;
+    try {
+      monaco.editor.setTheme(monacoTheme);
+    } catch {}
+  }
+
+  useEffect(() => {
+    if (monacoApiRef.current) {
+      try {
+        monacoApiRef.current.editor.setTheme(monacoTheme);
+      } catch {}
+    }
+  }, [monacoTheme]);
 
   return (
     <div className="grid h-full grid-rows-[auto_1fr_auto]">
@@ -86,7 +128,8 @@ export function EditorPanel({
           height="100%"
           defaultLanguage={monacoLang}
           language={monacoLang}
-          theme="vs-dark"
+          theme={monacoTheme}
+          onMount={handleEditorMount}
           value={value}
           onChange={(v) => setValue(v ?? "")}
           options={{

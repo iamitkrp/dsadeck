@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -24,8 +24,50 @@ export default function ClientEditor({ question }: { question: Question }) {
   const [spaceWhy, setSpaceWhy] = useState<string | null>(null);
   const [hintStep, setHintStep] = useState<number>(0);
   const [showSolution, setShowSolution] = useState<boolean>(false);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const monacoApiRef = useRef<any>(null);
 
   const monacoLang = useMemo(() => (language === "cpp" ? "cpp" : language === "c" ? "c" : language), [language]);
+  const monacoTheme = isDarkMode ? "vs-dark" : "vs";
+
+  // Keep Monaco theme in sync with app/theme
+  useEffect(() => {
+    function getIsDarkFromDom(): boolean {
+      const root = document.documentElement;
+      const body = document.body;
+      const hasDarkClass = root.classList.contains("dark") || (body && body.classList.contains("dark"));
+      const hasDarkData = root.getAttribute("data-theme") === "dark" || (body && body.getAttribute("data-theme") === "dark");
+      return Boolean(hasDarkClass || hasDarkData);
+    }
+
+    const apply = () => setIsDarkMode(getIsDarkFromDom());
+    apply();
+
+    const observer = new MutationObserver(apply);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "data-theme"] });
+    if (document.body) {
+      observer.observe(document.body, { attributes: true, attributeFilter: ["class", "data-theme"] });
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  function handleEditorMount(_editor: any, monaco: any) {
+    monacoApiRef.current = monaco;
+    try {
+      monaco.editor.setTheme(monacoTheme);
+    } catch {}
+  }
+
+  useEffect(() => {
+    if (monacoApiRef.current) {
+      try {
+        monacoApiRef.current.editor.setTheme(monacoTheme);
+      } catch {}
+    }
+  }, [monacoTheme]);
 
   function onLanguageChange(v: LanguageKey) {
     setLanguage(v);
@@ -112,7 +154,8 @@ export default function ClientEditor({ question }: { question: Question }) {
             height="100%"
             defaultLanguage={monacoLang}
             language={monacoLang}
-            theme="vs-dark"
+            theme={monacoTheme}
+            onMount={handleEditorMount}
             value={value}
             onChange={(v) => setValue(v ?? "")}
             options={{ fontSize: 14, minimap: { enabled: false }, automaticLayout: true, scrollBeyondLastLine: false, lineNumbers: "on" }}
