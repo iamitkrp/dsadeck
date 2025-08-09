@@ -22,7 +22,9 @@ export default function BackBar() {
   if (hide) return null;
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/70 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/40 supports-[backdrop-filter]:backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.08)] relative overflow-hidden">
+      {/* glassy tint + subtle gradient */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-foreground/10 to-transparent" />
       <div className="mx-auto flex h-12 max-w-7xl items-center gap-3 px-4 sm:px-6">
         <Button size="sm" variant="ghost" onClick={onBack} className="gap-1">
           <ArrowLeft className="size-4" />
@@ -31,6 +33,8 @@ export default function BackBar() {
         <div className="ml-auto" />
         <ThemeToggle />
       </div>
+      {/* bottom highlight line for glass effect */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent dark:via-white/10" />
     </header>
   );
 }
