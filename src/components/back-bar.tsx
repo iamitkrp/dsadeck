@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ThemeToggle from "@/components/theme-toggle";
 
 export default function BackBar() {
   const router = useRouter();
@@ -27,6 +28,8 @@ export default function BackBar() {
           <ArrowLeft className="size-4" />
           Back
         </Button>
+        <div className="ml-auto" />
+        <ThemeToggle />
       </div>
     </header>
   );

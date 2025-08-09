@@ -24,7 +24,16 @@ export default function ClientEditor({ question }: { question: Question }) {
   const [spaceWhy, setSpaceWhy] = useState<string | null>(null);
   const [hintStep, setHintStep] = useState<number>(0);
   const [showSolution, setShowSolution] = useState<boolean>(false);
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  function getIsDarkFromDom(): boolean {
+    const root = document.documentElement;
+    const body = document.body;
+    const hasDarkClass = root.classList.contains("dark") || (body && body.classList.contains("dark"));
+    const hasDarkData = root.getAttribute("data-theme") === "dark" || (body && body.getAttribute("data-theme") === "dark");
+    return Boolean(hasDarkClass || hasDarkData);
+  }
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    try { return getIsDarkFromDom(); } catch { return false; }
+  });
   const monacoApiRef = useRef<any>(null);
 
   const monacoLang = useMemo(() => (language === "cpp" ? "cpp" : language === "c" ? "c" : language), [language]);
@@ -32,14 +41,6 @@ export default function ClientEditor({ question }: { question: Question }) {
 
   // Keep Monaco theme in sync with app/theme
   useEffect(() => {
-    function getIsDarkFromDom(): boolean {
-      const root = document.documentElement;
-      const body = document.body;
-      const hasDarkClass = root.classList.contains("dark") || (body && body.classList.contains("dark"));
-      const hasDarkData = root.getAttribute("data-theme") === "dark" || (body && body.getAttribute("data-theme") === "dark");
-      return Boolean(hasDarkClass || hasDarkData);
-    }
-
     const apply = () => setIsDarkMode(getIsDarkFromDom());
     apply();
 
