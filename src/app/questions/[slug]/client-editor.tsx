@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { Monaco as MonacoEditorApi, OnMount } from "@monaco-editor/react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -34,7 +35,7 @@ export default function ClientEditor({ question }: { question: Question }) {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     try { return getIsDarkFromDom(); } catch { return false; }
   });
-  const monacoApiRef = useRef<any>(null);
+  const monacoApiRef = useRef<MonacoEditorApi | null>(null);
 
   const monacoLang = useMemo(() => (language === "cpp" ? "cpp" : language === "c" ? "c" : language), [language]);
   const monacoTheme = isDarkMode ? "vs-dark" : "vs";
@@ -55,7 +56,7 @@ export default function ClientEditor({ question }: { question: Question }) {
     };
   }, []);
 
-  function handleEditorMount(_editor: any, monaco: any) {
+  const handleEditorMount: OnMount = (_editor, monaco) => {
     monacoApiRef.current = monaco;
     try {
       monaco.editor.setTheme(monacoTheme);
