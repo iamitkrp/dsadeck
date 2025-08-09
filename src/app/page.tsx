@@ -22,7 +22,7 @@ const sections = [
     title: "Mock Test",
     description: "Timed assessments to simulate interview rounds.",
     href: "/mock-test",
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     key: "resources",
